@@ -11,3 +11,4 @@ class TestStringMethods(unittest.TestCase):
         assert len(data[0]["data"]["id"]) == len("1584695563609870336")
         assert type(data[0]["data"]["text"]) == str
         assert os.path.isfile("./out.csv") 
+        

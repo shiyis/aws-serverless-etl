@@ -1,12 +1,18 @@
 import boto3
-import csv
-from io import StringIO
 from datetime import datetime
-import filtered_stream
+import pandas as pd 
+import os 
+import pathlib
+
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+
 
 def upload_to_aws(local_file, bucket_name, s3_file):
-    s3 = boto3.client('s3')
-
+    s3 = boto3.client("s3",
+        aws_access_key_id=AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+    )
     try:
         s3.upload_file(local_file, bucket_name, s3_file)
         url = s3.generate_presigned_url(
@@ -28,9 +34,15 @@ def upload_to_aws(local_file, bucket_name, s3_file):
         return None
 
 def lambda_handler(event,context):
-    df = event.get("file")
-    df.to_csv("out.csv")
-    localFile = '/tmp/{}'.format(os.path.basename("out.csv"))
+    # df = event.get("file")
+    # localFile = '/tmp/{}'.format(os.path.basename("out.csv"))
+    # localFile = os.path.join(pathlib.Path(__file__).parent.resolve(), "out.csv")
+    # print(localFile)
     dt_string = datetime.now().strftime("%Y-%m-%d_%H%M")
-    csv_file_name =  'trending-tickers_'+dt_string +'.csv'
-    upload_to_aws(localFile, "aws-data-pipeline",csv_file_name)
+    csv_file_name =  'twitter-data-raw_'+dt_string +'.csv'
+    url = upload_to_aws("./out.csv", "aws-data-pipeline-team3", csv_file_name)
+
+    return url
+
+
+lambda_handler("","")

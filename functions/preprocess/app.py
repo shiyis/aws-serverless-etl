@@ -1,28 +1,28 @@
 import unicodedata
 import pandas as pd
-
+import spacy
+import nltk
+nltk.download('punkt')
 import string
 import re
 import contractions
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
 from nltk.probability import FreqDist
-lemmatizer = WordNetLemmatizer()
 
 #add punctuation char's to stopwords list
-stop_words = stopwords.words('english')
-stop_words += list(string.punctuation)
-stop_words += ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'anxiety', 'rt']
-stop_words += ["have","of","the","she","I",]
-
+custom_stop_words = stopwords.words('english')
+custom_stop_words += list(string.punctuation)
+custom_stop_words += ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'anxiety', 'rt']
+custom_stop_words += ["have","of","the","she","I","They","Her","She","Me","Something"]
+custom_stop_words = set(custom_stop_words)
 pd.set_option('display.min_rows', 50)
 pd.options.display.max_colwidth = 150
 
 
 def process_text(text):
     tokens = word_tokenize(text)
-    stopwords_removed = [token.lower() for token in tokens if token.lower() not in stop_words]
+    stopwords_removed = [token.lower() for token in tokens if token.lower() not in custom_stop_words]
     return stopwords_removed
 
 def standardize_accented_chars(text):
@@ -37,13 +37,32 @@ def expand_contractions(text):
         expanded_words.append(contractions.fix(word)) 
     return ' '.join(expanded_words)
 
-def lemmatize_text(df_text):
-    lemmatized =[]
-    for w in df_text:
-        lemmatized.append(lemmatizer.lemmatize(w))
-    return lemmatized
+def remove_stopwords(text,nlp,custom_stop_words=None, remove_small_tokens=True,min_len=2):
+    # if custom stop words are provided, then add them to default stop words list
+    if custom_stop_words:
+        nlp.Defaults.stop_words |= custom_stop_words
+    
+    filtered_sentence =[] 
+    doc=nlp(text)
+    for token in doc:
+        
+        if token.is_stop == False: 
+            
+            # if small tokens have to be removed, then select only those which are longer than the min_len 
+            if remove_small_tokens:
+                if len(token.text)>min_len:
+                    filtered_sentence.append(token.text)
+            else:
+                filtered_sentence.append(token.text)
+    # if after the stop word removal, words are still left in the sentence, then return the sentence as a string else return null 
+    return " ".join(filtered_sentence) if len(filtered_sentence)> 0 else None
 
-
+def lemmatize(text, nlp):
+    doc = nlp(text)
+    lemmatized_text = []
+    for token in doc:
+        lemmatized_text.append(token.lemma_)
+    return " ".join(lemmatized_text)
 
 def remove_mentions_and_tags(text):
     text = re.sub(r'@\S*', '', text)
@@ -51,26 +70,25 @@ def remove_mentions_and_tags(text):
 
 
 def keep_only_alphabet(text):
-    return re.sub(r'[^a-z]', ' ', text)
+    return re.sub(r'[^a-z]', '', text)
     
 
-def preprocess(df_text):
+def preprocess(text):
+    nlp = spacy.load("en_core_web_sm", disable=["parser", "ner"])
     text = remove_mentions_and_tags(text)
     text = keep_only_alphabet(text)
     text = remove_urls(text)
-    tokens = word_tokenize(df_text)
-    stopwords_removed = [token.lower() for token in tokens if token.lower() not in stop_words and len(token) > 3]
-
-    lemmatized =[]
-
-    for w in stopwords_removed:
-        lemmatized.append(lemmatizer.lemmatize(w))
-
+    tokens = word_tokenize(text)
+    stopwords_removed = [token.lower() for token in tokens if token.lower() not in custom_stop_words and len(token) > 3]
+    stopwords_removed = remove_stopwords(text,nlp, custom_stop_words=custom_stop_words)
+    
+    lemmatized = lemmatize("".join(stopwords_removed),nlp).split()
     processed = list(filter(lambda x: x.isalpha(), lemmatized))
 
-    return processed
+    return " ".join(processed)
 
 def lambda_handler(event, context):
-    df = event.get("file")
+    # df = event.get("file")
+    df = pd.read_csv("./out.csv")
     df['text'] = df['text'].apply(preprocess)
     return {"file":df}
