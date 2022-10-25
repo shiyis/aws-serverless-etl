@@ -38,7 +38,7 @@ def lambda_handler(event,context):
     # localFile = '/tmp/{}'.format(os.path.basename("out.csv"))
     # localFile = os.path.join(pathlib.Path(__file__).parent.resolve(), "out.csv")
     # print(localFile)
-    dt_string = datetime.now().strftime("%Y-%m-%d_%H%M")
+    dt_string = datetime.now().strftime("%Y-%m-%d")
     csv_file_name =  'twitter-data-raw_'+dt_string +'.csv'
     url = upload_to_aws("./out.csv", "aws-data-pipeline-team3", csv_file_name)
 

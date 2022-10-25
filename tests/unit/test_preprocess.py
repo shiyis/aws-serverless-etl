@@ -9,7 +9,7 @@ class TestStringMethods(unittest.TestCase):
         super().__init__(methodName)
         stop_words = []
         stop_words += list(string.punctuation)
-        stop_words += ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'anxiety', 'rt']
+        stop_words += ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
         stop_words += ["have","of","the","she","I","They","Her","She","Me","Something"]
         self.stop = set(stop_words)
 
@@ -43,7 +43,7 @@ class TestStringMethods(unittest.TestCase):
         assert type(app.lambda_handler("","")) == dict
         assert "text" in app.lambda_handler("","")["file"].columns
         assert type(app.lambda_handler("","")["file"].iloc[0,1]) == np.int64
+        for i in ["@","#","http","rt"]:
+            assert i not in app.lambda_handler("","")["file"].loc[0,"text"]
 
-        #TODO
-        #successful uploaded file
         

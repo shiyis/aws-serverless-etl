@@ -15,7 +15,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: use-east-1
       # run test
-      - run: pip install pytest
+      - run: pip install -r tests/requirements.txt --user
+      - run: python -m pytest tests/unit -v
       - run: pytest
 
       # sam build

@@ -82,13 +82,16 @@ def preprocess(text):
     stopwords_removed = [token.lower() for token in tokens if token.lower() not in custom_stop_words and len(token) > 3]
     stopwords_removed = remove_stopwords(text,nlp, custom_stop_words=custom_stop_words)
     
-    lemmatized = lemmatize("".join(stopwords_removed),nlp).split()
-    processed = list(filter(lambda x: x.isalpha(), lemmatized))
+    if stopwords_removed:
+        lemmatized = lemmatize("".join(stopwords_removed),nlp).split()
+        return "".join(list(filter(lambda x: x.isalpha(), lemmatized)))
+    else:
+        return ""
 
-    return " ".join(processed)
 
 def lambda_handler(event, context):
     # df = event.get("file")
     df = pd.read_csv("./out.csv")
     df['text'] = df['text'].apply(preprocess)
+    df.to_csv("./out.csv")
     return {"file":df}
