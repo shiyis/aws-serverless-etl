@@ -1,8 +1,8 @@
-from functions.stock_buyer import app
+from functions.preprocess import app
 
 
 def test_stock_checker():
-    stock_price = 75
+    stock_price = 25
     input_payload = {"stock_price": stock_price}
 
     data = app.lambda_handler(input_payload, "")
@@ -13,5 +13,5 @@ def test_stock_checker():
     assert "timestamp" in data
     assert "qty" in data
 
-    assert data["type"] == "buy"
+    assert data["type"] == "sell"
     assert data["price"] == str(stock_price)

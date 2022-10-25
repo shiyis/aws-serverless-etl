@@ -2,17 +2,34 @@ import requests
 import os
 import json
 import pandas as pd
+import boto3
+from time import time 
 
 # To set your enviornment variables in your terminal run the following line:
-# export 'BEARER_TOKEN'='<your_bearer_token>'
-bearer_token = os.environ.get("BEARER_TOKEN")
-
-
+# aws ssm put-parameter --name /twitter-data-pipeline/bearer_token --value <your bearer token value> --type SecureString --overwrite
+# SSM_PARAMETER_PREFIX = os.getenv("SSM_PARAMETER_PREFIX")
+# bearer_token = '/{}/bearer_token'.format(SSM_PARAMETER_PREFIX)
+# SSM = boto3.client('ssm')
+bearer_token = os.getenv("BEARER_TOKEN")
 def bearer_oauth(r):
     """
     Method required by bearer token authentication.
     """
 
+    # parameter_names = [
+    #         bearer_token,
+    # ]
+    # result = SSM.get_parameters(
+    #     Names=parameter_names,
+    #     WithDecryption=True
+    # )
+
+    # if result['InvalidParameters']:
+    #     raise RuntimeError(
+    #         'Could not find expected SSM parameters containing Twitter API keys: {}'.format(parameter_names))
+
+
+    # param_lookup = {param['Name']: param['Value'] for param in result['Parameters']}
     r.headers["Authorization"] = f"Bearer {bearer_token}"
     r.headers["User-Agent"] = "v2FilteredStreamPython"
     return r
@@ -71,7 +88,7 @@ def set_rules(delete):
     print(json.dumps(response.json()))
 
 
-def get_stream(set):
+def get_stream(set, end=int(time())+3):
     response = requests.get(
         "https://api.twitter.com/2/tweets/search/stream", auth=bearer_oauth, stream=True,
     )
@@ -82,27 +99,49 @@ def get_stream(set):
                 response.status_code, response.text
             )
         )
+
     l = []
     df = pd.DataFrame(columns=["id", "text"])
+    
     for response_line in response.iter_lines():
         if response_line:
             json_response = json.loads(response_line)
             obj = json.dumps(json_response, indent=4, sort_keys=True)
             print(json_response["data"]["id"])
-            item = { 
+            item = {
                 "id": json_response["data"]["id"],
                 "text": json_response["data"]["text"],
             }
             df = df.append(item, ignore_index=True)
+            l.append(json_response)
             df.to_csv("out.csv")
+            break
 
+    return l
 
-def main():
+def lambda_handler(event, context):
+    client = boto3.client("lambda")
+
     rules = get_rules()
-    # delete = get_all_rules(rules)
     set = set_rules(rules)
-    get_stream(set)
+    data = get_stream(set)
 
+    # file = pd.read_csv("./out.csv")
+    # inputParams = {
+    #     "file": file
+    # }
 
-if __name__ == "__main__":
-    main()
+    # response = client.invoke(
+    #     FunctionName = 'arn:aws:lambda:<region>:<account id>:function:preprocess',
+    #     InvocationType = 'RequestResponse',
+    #     Payload = json.dumps(inputParams)
+    # )
+    
+    # responseFromChild = json.laod(response['Payload'])
+    
+    # client.invoke(
+    #     FunctionName = 'arn:aws:lambda:<region>:<account id>:function:load_data',
+    #     InvocationType = 'Event',
+    #     Payload = json.dumps(responseFromChild["file"])
+    # )
+    return data
