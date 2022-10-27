@@ -90,7 +90,7 @@ def preprocess(text):
     #     return " ".join(list(filter(lambda x: x.isalpha(), lemmatized))) if lemmatized else ""
     # else:
     #     return ""
-    return stopwords_removed
+    return text
 
 def lambda_handler(event, context):
     # df = event.get("file")
