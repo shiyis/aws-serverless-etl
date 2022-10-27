@@ -3,5 +3,6 @@ import unittest
 
 class TestStringMethods(unittest.TestCase):
     def test_data_loader(self):
-        data = app.lambda_handler("", "")  
+        context =  {'dir':'./output/'}
+        data = app.lambda_handler("",context)  
         assert "http" in data

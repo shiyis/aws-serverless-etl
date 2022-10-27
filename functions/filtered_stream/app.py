@@ -88,7 +88,7 @@ def set_rules(delete):
     print(json.dumps(response.json()))
 
 
-def get_stream(set, end=int(time())+3):
+def get_stream(set, end=int(time())+3, dir="../output/"):
     response = requests.get(
         "https://api.twitter.com/2/tweets/search/stream", auth=bearer_oauth, stream=True,
     )
@@ -114,7 +114,7 @@ def get_stream(set, end=int(time())+3):
             }
             df = df.append(item, ignore_index=True)
             l.append(json_response)
-            df.to_csv("out.csv")
+            df.to_csv(dir + 'out.csv')
             break
 
     return l
@@ -124,24 +124,5 @@ def lambda_handler(event, context):
 
     rules = get_rules()
     set = set_rules(rules)
-    data = get_stream(set)
-
-    # file = pd.read_csv("./out.csv")
-    # inputParams = {
-    #     "file": file
-    # }
-
-    # response = client.invoke(
-    #     FunctionName = 'arn:aws:lambda:<region>:<account id>:function:preprocess',
-    #     InvocationType = 'RequestResponse',
-    #     Payload = json.dumps(inputParams)
-    # )
-    
-    # responseFromChild = json.laod(response['Payload'])
-    
-    # client.invoke(
-    #     FunctionName = 'arn:aws:lambda:<region>:<account id>:function:load_data',
-    #     InvocationType = 'Event',
-    #     Payload = json.dumps(responseFromChild["file"])
-    # )
+    data = get_stream(set, dir=context['dir'])
     return data

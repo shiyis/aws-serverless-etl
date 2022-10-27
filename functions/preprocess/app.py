@@ -2,7 +2,7 @@ import unicodedata
 import pandas as pd
 import spacy
 import nltk
-nltk.download('punkt')
+# nltk.download('punkt')
 import string
 import re
 import contractions
@@ -13,8 +13,8 @@ from nltk.probability import FreqDist
 #add punctuation char's to stopwords list
 custom_stop_words = stopwords.words('english')
 custom_stop_words += list(string.punctuation)
-custom_stop_words += ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'anxiety', 'rt']
-custom_stop_words += ["have","of","the","she","I","They","Her","She","Me","Something"]
+custom_stop_words += list("1234567890")
+custom_stop_words += ["have","of","the","she","I","They","Her","She","Me","Something","RT"]
 custom_stop_words = set(custom_stop_words)
 pd.set_option('display.min_rows', 50)
 pd.options.display.max_colwidth = 150
@@ -57,41 +57,46 @@ def remove_stopwords(text,nlp,custom_stop_words=None, remove_small_tokens=True,m
     # if after the stop word removal, words are still left in the sentence, then return the sentence as a string else return null 
     return " ".join(filtered_sentence) if len(filtered_sentence)> 0 else None
 
-def lemmatize(text, nlp):
-    doc = nlp(text)
-    lemmatized_text = []
-    for token in doc:
-        lemmatized_text.append(token.lemma_)
-    return " ".join(lemmatized_text)
+# def lemmatize(text, nlp):
+#     doc = nlp(text)
+#     lemmatized_text = []
+#     for token in doc:
+#         lemmatized_text.append(token.lemma_)
+#     return " ".join(lemmatized_text)
 
 def remove_mentions_and_tags(text):
     text = re.sub(r'@\S*', '', text)
+    text = re.sub(r'&\S*', '', text)
     return re.sub(r'#\S*', '', text)
 
-
-def keep_only_alphabet(text):
-    return re.sub(r'[^a-z]', '', text)
     
 
 def preprocess(text):
     nlp = spacy.load("en_core_web_sm", disable=["parser", "ner"])
     text = remove_mentions_and_tags(text)
-    text = keep_only_alphabet(text)
+    print(text)
+    text = expand_contractions(text)
+    print(text)
     text = remove_urls(text)
-    tokens = word_tokenize(text)
-    stopwords_removed = [token.lower() for token in tokens if token.lower() not in custom_stop_words and len(token) > 3]
+    print(text)
+    # tokens = word_tokenize(text)
+    # print(tokens)
+    # stopwords_removed = [token.lower() for token in tokens if token.lower() not in custom_stop_words and len(token) > 3]
     stopwords_removed = remove_stopwords(text,nlp, custom_stop_words=custom_stop_words)
-    
-    if stopwords_removed:
-        lemmatized = lemmatize("".join(stopwords_removed),nlp).split()
-        return "".join(list(filter(lambda x: x.isalpha(), lemmatized)))
-    else:
-        return ""
-
+    print(text)
+    # if stopwords_removed:
+    #     lemmatized = lemmatize("".join(stopwords_removed),nlp).split()
+    #     return " ".join(list(filter(lambda x: x.isalpha(), lemmatized))) if lemmatized else ""
+    # else:
+    #     return ""
+    return stopwords_removed
 
 def lambda_handler(event, context):
     # df = event.get("file")
-    df = pd.read_csv("./out.csv")
+    df = pd.read_csv(context['dir'] + "out.csv")
+    print(df["text"])
     df['text'] = df['text'].apply(preprocess)
-    df.to_csv("./out.csv")
+    print(df["text"])
+    df.to_csv(context['dir']+"out_preprocessed.csv")
     return {"file":df}
+

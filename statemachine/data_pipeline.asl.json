@@ -1,0 +1,62 @@
+{
+    "Comment": "A state machine that does data polling.",
+    "StartAt": "Twitter Data Polling",
+    "States": {
+        "Twitter Data Polling": {
+            "Type": "Task",
+            "Resource": "${DataPollingFunctionArn}",
+            "Retry": [
+                {
+                    "ErrorEquals": [
+                        "States.TaskFailed"
+                    ],
+                    "IntervalSeconds": 15,
+                    "MaxAttempts": 5,
+                    "BackoffRate": 1.5
+                }
+            ],
+            "Next": "Preprocess"
+        },
+        "Preprocess": {
+            "Type": "Task",
+            "Resource": "${PreprocessFunctionArn}",
+            "Retry": [
+                {
+                    "ErrorEquals": [
+                        "States.TaskFailed"
+                    ],
+                    "IntervalSeconds": 2,
+                    "MaxAttempts": 3,
+                    "BackoffRate": 1
+                }
+            ],
+            "Next": "Load Data"
+        },
+        "Load Data": {
+            "Type": "Task",
+            "Resource": "${DataLoadingFunctionArn}",
+            "Retry": [
+                {
+                    "ErrorEquals": [
+                        "States.TaskFailed"
+                    ],
+                    "IntervalSeconds": 2,
+                    "MaxAttempts": 3,
+                    "BackoffRate": 1
+                }
+            ],
+        },
+        "Retry": [
+            {
+                "ErrorEquals": [
+                    "States.TaskFailed"
+                ],
+                "IntervalSeconds": 20,
+                "MaxAttempts": 5,
+                "BackoffRate": 10
+            }
+        ],
+        "End": true
+    }
+
+}

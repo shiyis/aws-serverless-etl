@@ -18,7 +18,7 @@ def upload_to_aws(local_file, bucket_name, s3_file):
         url = s3.generate_presigned_url(
             ClientMethod='get_object',
             Params={
-                'Bucket': os.environ['BUCKET_NAME'],
+                'Bucket': "aws-data-pipeline-team3",
                 'Key': s3_file
             },
             ExpiresIn=24 * 3600
@@ -40,9 +40,7 @@ def lambda_handler(event,context):
     # print(localFile)
     dt_string = datetime.now().strftime("%Y-%m-%d")
     csv_file_name =  'twitter-data-raw_'+dt_string +'.csv'
-    url = upload_to_aws("./out.csv", "aws-data-pipeline-team3", csv_file_name)
+    url = upload_to_aws(context['dir'] + "out_preprocessed.csv", "aws-data-pipeline-team3", csv_file_name)
 
     return url
 
-
-lambda_handler("","")

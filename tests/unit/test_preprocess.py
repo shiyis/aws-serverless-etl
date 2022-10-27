@@ -25,25 +25,27 @@ class TestStringMethods(unittest.TestCase):
     def test_expand_contractions(self):
         assert app.expand_contractions("i've") == "i have"
 
-    def test_lemmatize_text(self):
-        nlp = spacy.load("en_core_web_sm", disable=["parser", "ner"])
-        assert app.lemmatize("has had something lovey dovey cats",nlp) == "have have something lovey dovey cat"
+    # def test_lemmatize_text(self):
+    #     nlp = spacy.load("en_core_web_sm", disable=["parser", "ner"])
+    #     assert app.lemmatize("has had something lovey dovey cats",nlp) == "have have something lovey dovey cat"
  
     def test_remove_mentions_tags_retweets(self):
         assert app.remove_mentions_and_tags("@love") == ""
         assert app.remove_mentions_and_tags("#something") == ""
 
-    def test_keep_only_alphabet(self):
-        assert app.keep_only_alphabet("ajsdf123450") == "ajsdf"
 
     def test_standardize_accented_chars(self):
         assert app.standardize_accented_chars("é") == "e"
 
     def test_lambda_handler(self):
-        assert type(app.lambda_handler("","")) == dict
-        assert "text" in app.lambda_handler("","")["file"].columns
-        assert type(app.lambda_handler("","")["file"].iloc[0,1]) == np.int64
+        context = {
+            'dir': './output/'
+        }
+        data = app.lambda_handler("",context)
+        assert type(data) == dict
+        assert "text" in data['file'].columns
+        assert type(data["file"].iloc[0,1]) == np.int64
         for i in ["@","#","http","rt"]:
-            assert i not in app.lambda_handler("","")["file"].loc[0,"text"]
+            assert i not in data["file"].loc[0,"text"]
 
         
