@@ -4,4 +4,3 @@ pandas
 unicodedata
 json
 contractions
-unicodedata
