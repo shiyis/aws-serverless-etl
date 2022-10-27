@@ -19,10 +19,9 @@ jobs:
       # run test
       - run: pip install -r tests/requirements.txt --user
       - run: python -m pytest tests/unit -v
-      - run: pytest
 
       # sam build
       - run: sam build --use-container
 
       # sam deploy
-      - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name aws-data-pipeline-cd --s3-bucket aws-data-pipeline-team3 # --capabilities CAPABILITY_IAM --region ##region##
+      - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name aws-data-pipeline-team3-sam-cd --s3-bucket aws-data-pipeline-team3-sam-deply --capabilities CAPABILITY_IAM --region us-east-1
