@@ -1,6 +1,5 @@
 spacy
 nltk
 pandas
-unicodedata
 json
 contractions

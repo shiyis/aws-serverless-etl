@@ -3,6 +3,7 @@ import pandas as pd
 import spacy
 import nltk
 nltk.download('punkt')
+nltk.download('stopwords')
 import string
 import re
 import contractions
