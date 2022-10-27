@@ -24,4 +24,4 @@ jobs:
       - run: sam build --use-container
 
       # sam deploy
-      - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name aws-data-pipeline-team3-sam-cd --s3-bucket aws-data-pipeline-team3-sam-deply --capabilities CAPABILITY_IAM --region us-east-1
+      - run: sam deploy 
