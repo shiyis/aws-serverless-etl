@@ -2,7 +2,7 @@ import unicodedata
 import pandas as pd
 import spacy
 import nltk
-# nltk.download('punkt')
+nltk.download('punkt')
 import string
 import re
 import contractions
@@ -32,29 +32,29 @@ def remove_urls(text):
     return re.sub(r'http\S+','', text)
 
 def expand_contractions(text):
-    expanded_words = [] 
+    expanded_words = []
     for word in text.split():
-        expanded_words.append(contractions.fix(word)) 
+        expanded_words.append(contractions.fix(word))
     return ' '.join(expanded_words)
 
 def remove_stopwords(text,nlp,custom_stop_words=None, remove_small_tokens=True,min_len=2):
     # if custom stop words are provided, then add them to default stop words list
     if custom_stop_words:
         nlp.Defaults.stop_words |= custom_stop_words
-    
-    filtered_sentence =[] 
+
+    filtered_sentence =[]
     doc=nlp(text)
     for token in doc:
-        
-        if token.is_stop == False: 
-            
-            # if small tokens have to be removed, then select only those which are longer than the min_len 
+
+        if token.is_stop == False:
+
+            # if small tokens have to be removed, then select only those which are longer than the min_len
             if remove_small_tokens:
                 if len(token.text)>min_len:
                     filtered_sentence.append(token.text)
             else:
                 filtered_sentence.append(token.text)
-    # if after the stop word removal, words are still left in the sentence, then return the sentence as a string else return null 
+    # if after the stop word removal, words are still left in the sentence, then return the sentence as a string else return null
     return " ".join(filtered_sentence) if len(filtered_sentence)> 0 else None
 
 # def lemmatize(text, nlp):
@@ -69,7 +69,7 @@ def remove_mentions_and_tags(text):
     text = re.sub(r'&\S*', '', text)
     return re.sub(r'#\S*', '', text)
 
-    
+
 
 def preprocess(text):
     nlp = spacy.load("en_core_web_sm", disable=["parser", "ner"])
@@ -99,4 +99,3 @@ def lambda_handler(event, context):
     print(df["text"])
     df.to_csv(context['dir']+"out_preprocessed.csv")
     return {"file":df}
-

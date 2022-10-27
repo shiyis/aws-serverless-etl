@@ -1,3 +1,7 @@
 pytest
 pytest-mock
 boto3
+spacy
+nltk
+pandas
+unicodedata
