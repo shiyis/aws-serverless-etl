@@ -1,2 +1,3 @@
 ./.aws-sam/
 ./false/
+.DS_Store
