@@ -1,0 +1,75 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'aws-data-pipline-lambda-cd
+
+  data pipeline sam sample code
+
+  '
+Globals:
+  Function:
+    Tracing: Active
+  Api:
+    TracingEnabled: true
+Resources:
+  DataPollingStateMachine:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      DefinitionUri: ../../statemachine/data_pipeline.asl.json
+      DefinitionSubstitutions:
+        DataPollingFunctionArn:
+          Fn::GetAtt:
+          - DataPollingFunctionArn
+          - Arn
+        PreprocessFunctionArn:
+          Fn::GetAtt:
+          - PreprocessFunctionArn
+          - Arn
+        DataLoadingFunctionArn:
+          Fn::GetAtt:
+          - DataLoadingFunctionArn
+          - Arn
+      Events:
+        DailyPollingSchedule:
+          Type: Schedule
+          Properties:
+            Description: Schedule to run the data polling pipeline every day
+            Enabled: false
+            Schedule: rate(1 day)
+      Policies:
+      - CloudWatchPutMetricPolicy: {}
+  DataPollingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: DataPollingFunction
+      Handler: app.lambda_handler
+      Runtime: python3.8
+    Metadata:
+      SamResourceId: DataPollingFunction
+  PreprocessFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: PreprocessFunction
+      Handler: app.lambda_handler
+      Runtime: python3.8
+    Metadata:
+      SamResourceId: PreprocessFunction
+  DataLoadingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: DataLoadingFunction
+      Handler: app.lambda_handler
+      Runtime: python3.8
+    Metadata:
+      SamResourceId: DataLoadingFunction
+Outputs:
+  DataPollingStateMachineArn:
+    Description: Data Polling State machine ARN
+    Value:
+      Ref: DataPollingStateMachine
+  DataPollingStateMachineRoleArn:
+    Description: IAM Role created for Stock Trading State machine based on the specified
+      SAM Policy Templates
+    Value:
+      Fn::GetAtt:
+      - DataPollingStateMachineRole
+      - Arn

@@ -61,5 +61,5 @@ Outputs:
     Description: "Data Polling State machine ARN"
     Value: !Ref DataPollingStateMachine
   DataPollingStateMachineRoleArn:
-    Description: "IAM Role created for Stock Trading State machine based on the specified SAM Policy Templates"
+    Description: "IAM Role created for Data Pipelining State machine based on the specified SAM Policy Templates"
     Value: !GetAtt DataPollingStateMachineRole.Arn
