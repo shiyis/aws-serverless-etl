@@ -38,25 +38,25 @@ def expand_contractions(text):
         expanded_words.append(contractions.fix(word))
     return ' '.join(expanded_words)
 
-def remove_stopwords(text,nlp,custom_stop_words=None, remove_small_tokens=True,min_len=2):
-    # if custom stop words are provided, then add them to default stop words list
-    if custom_stop_words:
-        nlp.Defaults.stop_words |= custom_stop_words
+# def remove_stopwords(text,nlp,custom_stop_words=None, remove_small_tokens=True,min_len=2):
+#     # if custom stop words are provided, then add them to default stop words list
+#     if custom_stop_words:
+#         nlp.Defaults.stop_words |= custom_stop_words
 
-    filtered_sentence =[]
-    doc=nlp(text)
-    for token in doc:
+#     filtered_sentence =[]
+#     doc=nlp(text)
+#     for token in doc:
 
-        if token.is_stop == False:
+#         if token.is_stop == False:
 
-            # if small tokens have to be removed, then select only those which are longer than the min_len
-            if remove_small_tokens:
-                if len(token.text)>min_len:
-                    filtered_sentence.append(token.text)
-            else:
-                filtered_sentence.append(token.text)
-    # if after the stop word removal, words are still left in the sentence, then return the sentence as a string else return null
-    return " ".join(filtered_sentence) if len(filtered_sentence)> 0 else None
+#             # if small tokens have to be removed, then select only those which are longer than the min_len
+#             if remove_small_tokens:
+#                 if len(token.text)>min_len:
+#                     filtered_sentence.append(token.text)
+#             else:
+#                 filtered_sentence.append(token.text)
+#     # if after the stop word removal, words are still left in the sentence, then return the sentence as a string else return null
+#     return " ".join(filtered_sentence) if len(filtered_sentence)> 0 else None
 
 # def lemmatize(text, nlp):
 #     doc = nlp(text)
@@ -83,7 +83,7 @@ def preprocess(text):
     # tokens = word_tokenize(text)
     # print(tokens)
     # stopwords_removed = [token.lower() for token in tokens if token.lower() not in custom_stop_words and len(token) > 3]
-    stopwords_removed = remove_stopwords(text,nlp, custom_stop_words=custom_stop_words)
+    # stopwords_removed = remove_stopwords(text,nlp, custom_stop_words=custom_stop_words)
     print(text)
     # if stopwords_removed:
     #     lemmatized = lemmatize("".join(stopwords_removed),nlp).split()
