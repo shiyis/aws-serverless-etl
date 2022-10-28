@@ -50,11 +50,11 @@ Resources:
       Policies:
         - CloudWatchPutMetricPolicy: {}
         - LambdaInvokePolicy:
-            FunctionName: !Ref DataPollingFunction
+            FunctionName: !GetAtt DataPollingFunction.Arn
         - LambdaInvokePolicy:
-            FunctionName: !Ref PreprocessFunction
+            FunctionName: !GetAtt PreprocessFunction.Arn
         - LambdaInvokePolicy:
-            FunctionName: !Ref DataLoadingFunction
+            FunctionName: !GetAtt DataLoadingFunction.Arn
 
 
 
@@ -68,3 +68,4 @@ Outputs:
   DataPollingStateMachineRoleArn:
     Description: "IAM Role created for Data Pipelining State machine based on the specified SAM Policy Templates"
     Value: !GetAtt DataPollingStateMachineRole.Arn
+

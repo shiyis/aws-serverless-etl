@@ -59,6 +59,21 @@ Resources:
             Schedule: rate(1 day)
       Policies:
       - CloudWatchPutMetricPolicy: {}
+      - LambdaInvokePolicy:
+          FunctionName:
+            Fn::GetAtt:
+            - DataPollingFunction
+            - Arn
+      - LambdaInvokePolicy:
+          FunctionName:
+            Fn::GetAtt:
+            - PreprocessFunction
+            - Arn
+      - LambdaInvokePolicy:
+          FunctionName:
+            Fn::GetAtt:
+            - DataLoadingFunction
+            - Arn
 Outputs:
   DataPollingStateMachineArn:
     Description: Data Polling State machine ARN
