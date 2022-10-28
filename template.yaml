@@ -50,11 +50,7 @@ Resources:
       Policies:
         - CloudWatchPutMetricPolicy: {}
         - LambdaInvokePolicy:
-            FunctionName: !GetAtt DataPollingFunction.Arn
-        - LambdaInvokePolicy:
-            FunctionName: !GetAtt PreprocessFunction.Arn
-        - LambdaInvokePolicy:
-            FunctionName: !GetAtt DataLoadingFunction.Arn
+            FunctionName: ""
 
 
 
