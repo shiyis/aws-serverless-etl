@@ -73,7 +73,7 @@ def remove_mentions_and_tags(text):
 
 
 def preprocess(text):
-    nlp = spacy.load("en_core_web_sm", disable=["parser", "ner"])
+    # nlp = spacy.load("en_core_web_sm", disable=["parser", "ner"])
     text = remove_mentions_and_tags(text)
     print(text)
     text = expand_contractions(text)

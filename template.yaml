@@ -13,24 +13,6 @@ Globals:
     TracingEnabled: True
 
 Resources:
-  DataPollingStateMachine:
-    Type: AWS::Serverless::StateMachine # More info about State Machine Resource: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-statemachine.html
-    Properties:
-      DefinitionUri: statemachine/data_pipeline.asl.json
-      DefinitionSubstitutions:
-        DataPollingFunctionArn: !GetAtt DataPollingFunctionArn.Arn
-        PreprocessFunctionArn: !GetAtt PreprocessFunctionArn.Arn
-        DataLoadingFunctionArn: !GetAtt DataLoadingFunctionArn.Arn
-      Events:
-        DailyPollingSchedule:
-          Type: Schedule # More info about Schedule Event Source: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-statemachine-schedule.html
-          Properties:
-            Description: Schedule to run the data polling pipeline every day
-            Enabled: False # This schedule is disabled by default to avoid incurring charges.
-            Schedule: "rate(1 day)"
-      Policies:
-        - CloudWatchPutMetricPolicy: {}
-
   DataPollingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
     Properties:
@@ -51,6 +33,22 @@ Resources:
       CodeUri: functions/load_data/
       Handler: app.lambda_handler
       Runtime: python3.8
+
+  DataPollingStateMachine:
+    Type: AWS::Serverless::StateMachine # More info about State Machine Resource: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-statemachine.html
+    Properties:
+      DefinitionUri: statemachine/data_pipeline.asl.json
+      DefinitionSubstitutions:
+        DataPollingFunctionArn: !GetAtt DataPollingFunction.Arn
+        PreprocessFunctionArn: !GetAtt PreprocessFunction.Arn
+        DataLoadingFunctionArn: !GetAtt DataLoadingFunction.Arn
+      Events:
+        DailyPollingSchedule:
+          Type: Schedule # More info about Schedule Event Source: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-statemachine-schedule.html
+          Properties:
+            Schedule: "rate(1 day)"
+      Policies:
+        - CloudWatchPutMetricPolicy: {}
 
 
 Outputs:
