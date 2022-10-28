@@ -33,9 +33,6 @@ Resources:
       CodeUri: functions/load_data/
       Handler: app.lambda_handler
       Runtime: python3.8
-      Policies:
-        - S3WritePolicy:
-          BucketName: aws-data-pipeline-team3
 
   DataPollingStateMachine:
     Type: AWS::Serverless::StateMachine # More info about State Machine Resource: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-statemachine.html
