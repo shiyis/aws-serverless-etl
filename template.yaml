@@ -19,9 +19,7 @@ Resources:
       ContentUri: my_layer
       CompatibleRuntimes:
         - python3.8
-    Metadata:
-      BuildMethod: python3.8
-      
+
   DataPollingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
     Properties:
@@ -52,7 +50,7 @@ Resources:
       FunctionName: load_data
       CodeUri: functions/load_data/
       Handler: app.lambda_handler
-      Runtime: python3.8  
+      Runtime: python3.8
       Layers:
         - !Ref MyLayer
 
@@ -87,4 +85,3 @@ Outputs:
   DataPollingStateMachineRoleArn:
     Description: "IAM Role created for Data Pipelining State machine based on the specified SAM Policy Templates"
     Value: !GetAtt DataPollingStateMachineRole.Arn
-

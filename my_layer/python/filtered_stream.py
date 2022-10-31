@@ -1,7 +1,7 @@
 import requests
 import os
 import json
-import pandas as pd
+import csv
 import boto3
 from time import time
 # To set your enviornment variables in your terminal run the following line:
@@ -100,21 +100,22 @@ def get_stream(set, end=int(time())+3, dir="../output/"):
         )
 
     l = []
-    df = pd.DataFrame(columns=["id", "text"])
+    header = ['id', 'text']
+    print(os.path.isfile(dir + 'out.csv'))
+    with open(dir + 'out.csv', 'w',encoding='UTF8') as f:
+        writer = csv.writer(f)
 
-    for response_line in response.iter_lines():
-        if response_line:
-            json_response = json.loads(response_line)
-            obj = json.dumps(json_response, indent=4, sort_keys=True)
-            print(json_response["data"]["id"])
-            item = {
-                "id": json_response["data"]["id"],
-                "text": json_response["data"]["text"],
-            }
-            df = df.append(item, ignore_index=True)
-            l.append(item)
-            df.to_csv(dir + 'out.csv')
-            print(os.path.isfile(dir + 'out.csv'))
+        # write the header
+        writer.writerow(header)
+
+        # write the data
+        for response_line in response.iter_lines():
+            if response_line:
+                json_response = json.loads(response_line)
+                obj = json.dumps(json_response, indent=4, sort_keys=True)
+                l.append(obj)
+                data = [json_response["data"]["id"],json_response["data"]["text"]]
+                writer.writerow(data)
 
     try:
         return l[0]["text"]

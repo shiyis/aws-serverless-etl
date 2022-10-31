@@ -1,15 +1,6 @@
-import unicodedata
 import pandas as pd
-import spacy
-import nltk
-nltk.download('punkt')
-nltk.download('stopwords')
 import string
 import re
-import contractions
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
-from nltk.probability import FreqDist
 
 #add punctuation char's to stopwords list
 # custom_stop_words = stopwords.words('english')
