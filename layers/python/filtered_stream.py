@@ -114,7 +114,7 @@ def get_stream(set, end=int(time())+3, dir="../output/"):
             df = df.append(item, ignore_index=True)
             l.append(item)
             df.to_csv(dir + 'out.csv')
-            print(os.path.isfile(dir + 'out.csv')
+            print(os.path.isfile(dir + 'out.csv'))
 
     try:
         return l[0]["text"]
