@@ -105,7 +105,6 @@ def get_stream(set, end=int(time())+3, dir="../output/"):
     with open(dir + 'out.csv', 'w',encoding='UTF8') as f:
         writer = csv.writer(f)
 
-<<<<<<< HEAD:my_layer/python/filtered_stream.py
         # write the header
         writer.writerow(header)
 
@@ -117,22 +116,8 @@ def get_stream(set, end=int(time())+3, dir="../output/"):
                 l.append(obj)
                 data = [json_response["data"]["id"],json_response["data"]["text"]]
                 writer.writerow(data)
-=======
-    for response_line in response.iter_lines():
-        if response_line:
-            json_response = json.loads(response_line)
-            obj = json.dumps(json_response, indent=4, sort_keys=True)
-            print(json_response["data"]["id"])
-            item = {
-                "id": json_response["data"]["id"],
-                "text": json_response["data"]["text"],
-            }
-            print(item)
-            df = df.append(item, ignore_index=True)
-            l.append(item)
-            df.to_csv(dir + 'out.csv')
-            print(os.path.isfile(dir + 'out.csv'))
->>>>>>> 125e3689a62f413b9cf1e947fa3f3fe5bd62ecaf:functions/filtered_stream/filtered_stream.py
+                print(data)
+                print(os.path.isfile(dir + 'out.csv'))
 
     try:
         return l[0]["text"]
