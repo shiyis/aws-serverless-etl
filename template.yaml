@@ -13,12 +13,24 @@ Globals:
     TracingEnabled: True
 
 Resources:
+  MyLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri: layers
+      CompatibleRuntimes:
+        - python3.8
+      
   DataPollingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
     Properties:
       CodeUri: functions/filtered_stream/
       Handler: app.lambda_handler
       Runtime: python3.8
+      Layers:
+        - !Ref MyLayer
+      Policies:
+        - SSMParameterReadPolicy:
+            ParameterName: data-pipeline-team3/bearer_token
 
   PreprocessFunction:
     Type: AWS::Serverless::Function
@@ -26,13 +38,19 @@ Resources:
       CodeUri: functions/preprocess/
       Handler: app.lambda_handler
       Runtime: python3.8
+      Layers:
+        - !Ref MyLayer
+
 
   DataLoadingFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: functions/load_data/
       Handler: app.lambda_handler
-      Runtime: python3.8
+      Runtime: python3.8  
+      Layers:
+        - !Ref MyLayer
+
 
   DataPollingStateMachine:
     Type: AWS::Serverless::StateMachine # More info about State Machine Resource: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-statemachine.html
