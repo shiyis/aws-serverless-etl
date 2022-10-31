@@ -29,3 +29,11 @@ packagetype = "Zip"
 functions = ["DataLoadingFunction"]
 
 [layer_build_definitions]
+[layer_build_definitions.723092cb-44c3-4d53-a791-fbe5ffcb92ed]
+layer_name = "MyLayer"
+codeuri = "/Users/shiyishen/nlp/aws-labs/final_project/aws-data-pipline-lambda-cd/my_layer"
+build_method = "requirements.txt"
+compatible_runtimes = ["python3.8"]
+architecture = "x86_64"
+manifest_hash = ""
+layer = "MyLayer"
