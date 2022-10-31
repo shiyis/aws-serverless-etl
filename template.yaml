@@ -23,6 +23,7 @@ Resources:
   DataPollingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
     Properties:
+      FunctionName: filtered_stream
       CodeUri: functions/filtered_stream/
       Handler: app.lambda_handler
       Runtime: python3.8
@@ -35,6 +36,7 @@ Resources:
   PreprocessFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: preproccess
       CodeUri: functions/preprocess/
       Handler: app.lambda_handler
       Runtime: python3.8
@@ -45,6 +47,7 @@ Resources:
   DataLoadingFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: load_data
       CodeUri: functions/load_data/
       Handler: app.lambda_handler
       Runtime: python3.8  
