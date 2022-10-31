@@ -16,9 +16,11 @@ Resources:
   MyLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
-      ContentUri: layers
+      ContentUri: my_layer
       CompatibleRuntimes:
         - python3.8
+    Metadata:
+      BuildMethod: makefile
       
   DataPollingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
