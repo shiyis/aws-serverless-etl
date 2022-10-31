@@ -111,6 +111,7 @@ def get_stream(set, end=int(time())+3, dir="../output/"):
                 "id": json_response["data"]["id"],
                 "text": json_response["data"]["text"],
             }
+            print(item)
             df = df.append(item, ignore_index=True)
             l.append(item)
             df.to_csv(dir + 'out.csv')
