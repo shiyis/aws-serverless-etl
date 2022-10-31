@@ -23,6 +23,6 @@ jobs:
       # sam build
       - run: sam build --use-container
       #
-      - run: sam pacakge --s3-bucket aws-data-pipeline-lambda-package
+      - run: sam package --s3-bucket aws-data-pipeline-lambda-package
       # sam deploy
       - run: sam deploy 
