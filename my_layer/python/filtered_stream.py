@@ -125,10 +125,20 @@ def get_stream(set, context=None, dir="../output/"):
                     l.append(obj)
                     data = [json_response["data"]["id"],json_response["data"]["text"]]
                     writer.writerow(data)
+<<<<<<< Updated upstream
     except Exception as e:
         logging.error(f'Exception:\n{e}')
 
     signal.alarm(0)# This line fixed the issue above!
+=======
+            else:
+                break
+            
+
+                
+    print("file dir exists:", os.path.isfile(dir + 'out.csv'))
+    # signal.alarm(0)# This line fixed the issue above!
+>>>>>>> Stashed changes
     return {'statusCode': 200, 'body': l[0]["text"]}
 
 

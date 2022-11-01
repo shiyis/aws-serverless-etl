@@ -2,11 +2,12 @@ version = 0.1
 [default]
 [default.deploy]
 [default.deploy.parameters]
-stack_name = "aws-data-pipeline-stack"
-s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1u13ll5ebmju0"
-s3_prefix = "aws-data-pipeline-stack"
+stack_name = "stack"
+s3_bucket = "aws-data-pipeline-stack"
+s3_prefix = "stack"
 region = "us-east-1"
-confirm_changeset = false
+confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
-disable_rollback = false
+disable_rollback = true
 image_repositories = []
+=
