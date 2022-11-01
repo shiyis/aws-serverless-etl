@@ -4,6 +4,7 @@ import json
 import csv
 import boto3
 from time import time
+import signal, logging
 # To set your enviornment variables in your terminal run the following line:
 # aws ssm put-parameter --name /twitter-data-pipeline/bearer_token --value <your bearer token value> --type SecureString --overwrite
 
@@ -87,7 +88,7 @@ def set_rules(delete):
     print(json.dumps(response.json()))
 
 
-def get_stream(set, end=int(time())+3, dir="../output/"):
+def get_stream(set, context=None, dir="../output/"):
     response = requests.get(
         "https://api.twitter.com/2/tweets/search/stream", auth=bearer_oauth, stream=True,
     )
@@ -102,24 +103,32 @@ def get_stream(set, end=int(time())+3, dir="../output/"):
     l = []
     header = ['id', 'text']
     print(os.path.isfile(dir + 'out.csv'))
-    with open(dir + 'out.csv', 'w',encoding='UTF8') as f:
-        writer = csv.writer(f)
-
-        # write the header
-        writer.writerow(header)
-
-        # write the data
-        for response_line in response.iter_lines():
-            if response_line:
-                json_response = json.loads(response_line)
-                obj = json.dumps(json_response, indent=4, sort_keys=True)
-                l.append(obj)
-                data = [json_response["data"]["id"],json_response["data"]["text"]]
-                writer.writerow(data)
-                print(data)
-                print(os.path.isfile(dir + 'out.csv'))
 
     try:
-        return l[0]["text"]
-    except ValueError:
-        return 'No data found!'
+        signal.alarm(int(context.get_remaining_time_in_millis() / 1000) - 1)
+
+        logging.info('Testing stuff')
+        # Do work
+
+
+        with open(dir + 'out.csv', 'w',encoding='UTF8') as f:
+            writer = csv.writer(f)
+
+            # write the header
+            writer.writerow(header)
+
+            # write the data
+            for response_line in response.iter_lines():
+                if response_line:
+                    json_response = json.loads(response_line)
+                    obj = json.dumps(json_response, indent=4, sort_keys=True)
+                    l.append(obj)
+                    data = [json_response["data"]["id"],json_response["data"]["text"]]
+                    writer.writerow(data)
+    except Exception as e:
+        logging.error(f'Exception:\n{e}')
+
+    signal.alarm(0)# This line fixed the issue above!
+    return {'statusCode': 200, 'body': l[0]["text"]}
+
+
