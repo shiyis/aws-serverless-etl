@@ -102,7 +102,6 @@ def get_stream(set, context=None, dir="../output/"):
 
     l = []
     header = ['id', 'text']
-    print(os.path.isfile(dir + 'out.csv'))
 
     while int(context.get_remaining_time_in_millis() / 1000) - 1 > 0:
         logging.info('Testing stuff')
@@ -123,7 +122,7 @@ def get_stream(set, context=None, dir="../output/"):
                     l.append(obj)
                     data = [json_response["data"]["id"],json_response["data"]["text"]]
                     writer.writerow(data)
-
+    print("file dir exists:", os.path.isfile(dir + 'out.csv'))
     # signal.alarm(0)# This line fixed the issue above!
     return {'statusCode': 200, 'body': l[0]["text"]}
 
