@@ -104,9 +104,7 @@ def get_stream(set, context=None, dir="../output/"):
     header = ['id', 'text']
     print(os.path.isfile(dir + 'out.csv'))
 
-    try:
-        signal.alarm(int(context.get_remaining_time_in_millis() / 1000) - 1)
-
+    while int(context.get_remaining_time_in_millis() / 1000) - 1 > 0:
         logging.info('Testing stuff')
         # Do work
 
@@ -125,10 +123,8 @@ def get_stream(set, context=None, dir="../output/"):
                     l.append(obj)
                     data = [json_response["data"]["id"],json_response["data"]["text"]]
                     writer.writerow(data)
-    except Exception as e:
-        logging.error(f'Exception:\n{e}')
 
-    signal.alarm(0)# This line fixed the issue above!
+    # signal.alarm(0)# This line fixed the issue above!
     return {'statusCode': 200, 'body': l[0]["text"]}
 
 
