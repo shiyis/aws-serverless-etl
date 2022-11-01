@@ -3,7 +3,7 @@ import json
 def lambda_handler(event, context):
     rules = get_rules()
     set = set_rules(rules)
-    data = get_stream(set, context=context dir=event['dir'])
+    data = get_stream(set, context=context, dir=event['dir'])
     return {
             "statusCode": 200,
             "body": json.dumps({
