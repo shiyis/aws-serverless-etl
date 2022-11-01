@@ -81,12 +81,12 @@ def preprocess(text):
     return text
 
 
-def df_apply():
-    df = pd.read_csv(context['dir'] + "out.csv")
+def df_apply(event):
+    df = pd.read_csv(event['dir'] + "out.csv")
     # print(df["text"])
     df['text'] = df['text'].apply(preprocess)
     # print(df["text"])
-    df.to_csv(context['dir']+"out_preprocessed.csv")
+    df.to_csv(event['dir']+"out_preprocessed.csv")
     try:
         return df.loc[0,'text']
     except ValueError:

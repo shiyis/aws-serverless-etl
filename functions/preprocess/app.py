@@ -5,6 +5,6 @@ def lambda_handler(event, context):
     return {
         "statusCode": 200,
         "body": json.dumps({
-            "message": df_apply() # invoke layer function
+            "message": df_apply(event) # invoke layer function
         }),
     }
