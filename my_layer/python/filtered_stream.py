@@ -102,7 +102,7 @@ def get_stream(set, context=None, dir="../output/"):
 
     l = []
     header = ['id', 'text']
-
+    logging.info("there are {} seconds left".format(int(context.get_remaining_time_in_millis() / 1000) - 1))
     while int(context.get_remaining_time_in_millis() / 1000) - 1 > 0:
         logging.info('Testing stuff')
         # Do work
