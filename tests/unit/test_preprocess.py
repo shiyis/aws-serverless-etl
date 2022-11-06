@@ -1,6 +1,5 @@
 from functions.preprocess import app
 import unittest
-import spacy
 import string
 import numpy as np
 class TestStringMethods(unittest.TestCase):
@@ -15,20 +14,11 @@ class TestStringMethods(unittest.TestCase):
 
     def test_remove_urls(self):
         assert app.remove_urls("https://www.google.com/") == ""
-    
-    # def test_remove_stop(self):
-    #     nlp = spacy.load("en_core_web_sm", disable=["parser", "ner"])
-    #     assert app.remove_stopwords("this is something fun!",nlp, self.stop) == "fun"
-    #     assert app.remove_stopwords("this is something not fun!",nlp,self.stop) == "fun"
-    #     assert app.remove_stopwords("I have done something wrong",nlp, self.stop) == "wrong"
+
 
     def test_expand_contractions(self):
         assert app.expand_contractions("i've") == "i have"
 
-    # def test_lemmatize_text(self):
-    #     nlp = spacy.load("en_core_web_sm", disable=["parser", "ner"])
-    #     assert app.lemmatize("has had something lovey dovey cats",nlp) == "have have something lovey dovey cat"
- 
     def test_remove_mentions_tags_retweets(self):
         assert app.remove_mentions_and_tags("@love") == ""
         assert app.remove_mentions_and_tags("#something") == ""

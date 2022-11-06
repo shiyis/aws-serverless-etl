@@ -1,13 +1,6 @@
-from preprocess import df_apply
+# from preprocess import df_apply
 import json
 import signal 
-
+from . import preprocess
 def lambda_handler(event, context):
-    timeout  = signal.alarm((context.get_remaining_time_in_millis() / 1000) - 1)
-
-    return {
-        "statusCode": 200,
-        "body": json.dumps({
-            "message": df_apply(event) # invoke layer function
-        }),
-    }
+    return preprocess.df_apply(event.Paylaod.stream_results)
