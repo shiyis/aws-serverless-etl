@@ -1,76 +1,73 @@
 {
-    "Comment": "A description of my state machine",
-    "StartAt": "Twitter Data Poll",
-    "States": {
-      "Twitter Data Poll": {
-        "Type": "Task",
-        "Resource": "arn:aws:states:::lambda:invoke",
-        "OutputPath": "$.Payload",
-        "ResultPath": "$.Payload.stream_results",
-        "Parameters": {
-          "Payload.$": "$",
-          "FunctionName": "arn:aws:lambda:us-east-1:237346368298:function:aws-data-pipeline-stack-DataLoadingFunction-wSC4aahJWVLD:$LATEST"
-        },
-        "Retry": [
-          {
-            "ErrorEquals": [
-              "Lambda.ServiceException",
-              "Lambda.AWSLambdaException",
-              "Lambda.SdkClientException"
-            ],
-            "IntervalSeconds": 2,
-            "MaxAttempts": 6,
-            "BackoffRate": 2
-          }
-        ],
-        "Next": "Preprocess"
+  "Comment": "A description of my state machine",
+  "StartAt": "get twitter data",
+  "States": {
+    "get twitter data": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "OutputPath": "$.Payload",
+      "Parameters": {
+        "FunctionName": "arn:aws:lambda:us-east-1:237346368298:function:filtered_stream:$LATEST",
+        "Payload.$": "$"
       },
-      "Preprocess": {
-        "Type": "Task",
-        "Resource": "arn:aws:states:::lambda:invoke",
-        "InputPath": "$.Payload.stream_results",
-        "OutputPath": "$.Payload",
-        "ResultPath": "$.Payload.preprocess_results",
-        "Parameters": {
-          "Payload.$": "$",
-          "FunctionName": "arn:aws:lambda:us-east-1:237346368298:function:aws-data-pipeline-stack-PreprocessFunction-XUkXzodwX1vY:$LATEST"
-        },
-        "Retry": [
-          {
-            "ErrorEquals": [
-              "Lambda.ServiceException",
-              "Lambda.AWSLambdaException",
-              "Lambda.SdkClientException"
-            ],
-            "IntervalSeconds": 2,
-            "MaxAttempts": 6,
-            "BackoffRate": 2
-          }
-        ],
-        "Next": "Load"
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException"
+          ],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 6,
+          "BackoffRate": 2
+        }
+      ],
+      "Next": "preprocess twitter data"
+    },
+    "preprocess twitter data": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "InputPath": "$",
+      "OutputPath": "$.Payload",
+      "Parameters": {
+        "FunctionName": "arn:aws:lambda:us-east-1:237346368298:function:preproccess:$LATEST",
+        "Payload.$": "$"
       },
-      "Load": {
-        "Type": "Task",
-        "Resource": "arn:aws:states:::lambda:invoke",
-        "InputPath": "$.Payload.preprocess_results",
-        "OutputPath": "$.Payload",
-        "Parameters": {
-          "Payload.$": "$",
-          "FunctionName": "arn:aws:lambda:us-east-1:237346368298:function:aws-data-pipeline-stack-DataLoadingFunction-wSC4aahJWVLD:$LATEST"
-        },
-        "Retry": [
-          {
-            "ErrorEquals": [
-              "Lambda.ServiceException",
-              "Lambda.AWSLambdaException",
-              "Lambda.SdkClientException"
-            ],
-            "IntervalSeconds": 2,
-            "MaxAttempts": 6,
-            "BackoffRate": 2
-          }
-        ],
-        "End": true
-      }
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException"
+          ],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 6,
+          "BackoffRate": 2
+        }
+      ],
+      "Next": "load twitter data"
+    },
+    "load twitter data": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "OutputPath": "$.Payload",
+      "Parameters": {
+        "Payload.$": "$",
+        "FunctionName": "arn:aws:lambda:us-east-1:237346368298:function:load_data:$LATEST"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException"
+          ],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 6,
+          "BackoffRate": 2
+        }
+      ],
+      "End": true
     }
   }
+}

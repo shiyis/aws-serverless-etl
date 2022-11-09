@@ -2,6 +2,8 @@ import pandas as pd
 import re
 import unicodedata
 import contractions
+import json 
+
 
 pd.set_option('display.min_rows', 50)
 pd.options.display.max_colwidth = 150
@@ -32,12 +34,7 @@ def preprocess(text):
     return text
 
 
-def df_apply(event):
-    df = pd.read_csv(event['dir'] + "out.csv")
+def df_apply(input):
+    df = pd.DataFrame(input, columns=['id', 'text'] )
     df['text'] = df['text'].apply(preprocess)
-    # df.to_csv(event['dir']+"out_preprocessed.csv")
-    try:
-        return df.loc[0,'text']
-    except ValueError:
-        print('no data')
-    return df
+    return df.values.tolist()

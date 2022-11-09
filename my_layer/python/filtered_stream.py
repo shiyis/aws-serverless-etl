@@ -6,29 +6,29 @@ from time import time
 # To set your enviornment variables in your terminal run the following line:
 # aws ssm put-parameter --name /twitter-data-pipeline/bearer_token --value <your bearer token value> --type SecureString --overwrite
 BEARER_TOKEN = os.getenv('BEARER_TOKEN')
-# SSM_PARAMETER_PREFIX = os.getenv("SSM_PARAMETER_PREFIX")
-# bearer_token = '/data-pipeline-team3/bearer_token'
+SSM_PARAMETER_PREFIX = os.getenv("SSM_PARAMETER_PREFIX")
+bearer_token = '/data-pipeline-team3/bearer_token'
 SSM = boto3.client('ssm', region_name="us-east-1")
 def bearer_oauth(r):
     """
     Method required by bearer token authentication.
     """
 
-    # parameter_names = [
-    #         bearer_token,
-    # ]
-    # result = SSM.get_parameters(
-    #     Names=parameter_names,
-    #     WithDecryption=True
-    # )
+    parameter_names = [
+            bearer_token,
+    ]
+    result = SSM.get_parameters(
+        Names=parameter_names,
+        WithDecryption=True
+    )
 
-    # if result['InvalidParameters']:
-    #     raise RuntimeError(
-    #         'Could not find expected SSM parameters containing Twitter API keys: {}'.format(parameter_names))
+    if result['InvalidParameters']:
+        raise RuntimeError(
+            'Could not find expected SSM parameters containing Twitter API keys: {}'.format(parameter_names))
 
 
-    # param_lookup = {param['Name']: param['Value'] for param in result['Parameters']}
-    r.headers["Authorization"] = f"Bearer {BEARER_TOKEN}"
+    param_lookup = {param['Name']: param['Value'] for param in result['Parameters']}
+    r.headers["Authorization"] = f"Bearer {param_lookup[bearer_token]}"
     r.headers["User-Agent"] = "v2FilteredStreamPython"
     return r
 
@@ -125,6 +125,6 @@ def get_stream(set, context=None, dir="../output/"):
             data = tuple((json_response["data"]["id"], json_response["data"]["text"]))
             l.append(data)
             count += 1
-            if count >= 5:
+            if count >= 500:
                 break
     return l

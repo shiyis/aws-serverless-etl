@@ -27,6 +27,7 @@ Resources:
       CodeUri: functions/filtered_stream/
       Handler: app.lambda_handler
       Runtime: python3.8
+      Timeout: 900
       Layers:
         - !Ref MyLayer
       Policies:
@@ -40,6 +41,7 @@ Resources:
       CodeUri: functions/preprocess/
       Handler: app.lambda_handler
       Runtime: python3.8
+      Timeout: 900
       Layers:
         - !Ref MyLayer
 
@@ -51,8 +53,12 @@ Resources:
       CodeUri: functions/load_data/
       Handler: app.lambda_handler
       Runtime: python3.8
+      Timeout: 900
       Layers:
         - !Ref MyLayer
+      Policies:
+        - S3WritePolicy:
+            BucketName: aws-data-pipeline-team3
 
 
   DataPollingStateMachine:
