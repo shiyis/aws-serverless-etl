@@ -1,0 +1,17 @@
+.
+├── functions
+│   ├── filtered_stream
+│   │   ├── app.py
+│   │   └── requirements.txt
+│   ├── load_data
+│   │   ├── app.py
+│   │   └── requirements.txt
+│   └── preprocess
+│       ├── app.py
+│       └── requirements.txt
+├── samconfig.toml
+├── statemachine
+│   └── data_pipeline.asl.json
+├── template.yaml
+
+
