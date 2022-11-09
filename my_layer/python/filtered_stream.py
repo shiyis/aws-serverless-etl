@@ -118,7 +118,6 @@ def get_stream(set, context=None, dir="../output/"):
         )
 
     l = []
-<<<<<<< HEAD
     count = 0
     for response_line in response.iter_lines():
         if response_line:
@@ -129,38 +128,3 @@ def get_stream(set, context=None, dir="../output/"):
             if count >= 500:
                 break
     return l
-=======
-    header = ['id', 'text']
-    logging.info("there are {} seconds left".format(int(context.get_remaining_time_in_millis() / 1000) - 1))
-    logging.info('Testing stuff')
-    # Do work
-
-
-    with open(dir + 'out.csv', 'w',encoding='UTF8') as f:
-        writer = csv.writer(f)
-
-        # write the header
-        writer.writerow(header)
-
-        # write the data
-        for response_line in response.iter_lines():
-            if int(context.get_remaining_time_in_millis() / 1000) - 1 > 1:
-                if response_line:
-                    json_response = json.loads(response_line)
-                    obj = json.dumps(json_response, indent=4, sort_keys=True)
-                    l.append(obj)
-                    data = [json_response["data"]["id"],json_response["data"]["text"]]
-                    logging.info(data)
-                    writer.writerow(data)
-            else:
-                break
-            
-
-            logging.info("time is up!")
-
-    print("file dir exists:", os.path.isfile(dir + 'out.csv'))
-    # signal.alarm(0)# This line fixed the issue above!
-    return {'statusCode': 200, 'body': l[0]["text"]}
-
-
->>>>>>> main
