@@ -25,4 +25,4 @@ jobs:
       #
       - run: sam package --s3-bucket aws-data-pipeline-lambda-package
       # sam deploy
-      - run: sam deploy 
+      - run: sam deploy --config-file samconfig-dev.toml
