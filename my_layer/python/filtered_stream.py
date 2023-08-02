@@ -48,7 +48,7 @@ def get_rules():
 def get_all_rules(rules):
     if rules is None or "data" not in rules:
         return None
-    sample_rulees = [
+    sample_rules = [
         {"value": "artist", "tag": "music artist"},
     ]
 
