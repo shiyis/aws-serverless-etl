@@ -1,10 +1,10 @@
 from preprocess import df_apply
 import json
-<<<<<<< HEAD
-import signal 
+import signal
+
 def lambda_handler(event, context):
     return df_apply(event)
-=======
+
 
 def lambda_handler(event, context):
     return {
@@ -13,4 +13,4 @@ def lambda_handler(event, context):
             "message": df_apply(event) # invoke layer function
         }),
     }
->>>>>>> main
+
